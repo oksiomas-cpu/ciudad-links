@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/stats", "destination": "/stats.html" },
+    { "source": "/g(\\d+)", "destination": "/api/redirect?gid=g$1" }
+  ]
+}
