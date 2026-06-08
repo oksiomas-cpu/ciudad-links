@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>La Ciudad — статистика переходов</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --raspberry: #b3123f;
+      --raspberry-soft: #d94a6e;
+      --gold: #c9a24b;
+      --gold-soft: #e6cf96;
+      --emerald: #1f7a5c;
+      --ink: #3a2a2e;
+      --paper: #fffdf8;
+      --card: #ffffff;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Manrope", system-ui, sans-serif;
+      background:
+        radial-gradient(1200px 600px at 50% -200px, #fff3f6 0%, transparent 60%),
+        var(--paper);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 28px 18px 60px;
+    }
+    .wrap { max-width: 640px; margin: 0 auto; }
+
+    header { text-align: center; margin-bottom: 28px; }
+    .crest {
+      font-size: 30px; line-height: 1;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700;
+      font-size: 32px;
+      color: var(--raspberry);
+      letter-spacing: .2px;
+    }
+    .sub {
+      margin-top: 6px;
+      font-size: 14px;
+      color: #9a8b86;
+      font-weight: 500;
+    }
+
+    .total-card {
+      margin: 0 auto 26px;
+      background: linear-gradient(135deg, var(--raspberry), var(--raspberry-soft));
+      color: #fff;
+      border-radius: 22px;
+      padding: 26px 24px;
+      text-align: center;
+      box-shadow: 0 18px 40px -18px rgba(179,18,63,.55);
+      position: relative;
+      overflow: hidden;
+    }
+    .total-card::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(300px 120px at 80% -20px, rgba(230,207,150,.35), transparent 70%);
+      pointer-events: none;
+    }
+    .total-label { font-size: 13px; letter-spacing: 2px; text-transform: uppercase; opacity: .85; }
+    .total-num {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700;
+      font-size: 64px;
+      line-height: 1;
+      margin-top: 4px;
+    }
+    .total-foot { font-size: 13px; opacity: .8; margin-top: 8px; }
+
+    .list { display: flex; flex-direction: column; gap: 12px; }
+    .row {
+      background: var(--card);
+      border: 1px solid #f0e6d6;
+      border-radius: 16px;
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 6px 18px -12px rgba(58,42,46,.25);
+      transition: transform .15s ease;
+    }
+    .row:hover { transform: translateY(-1px); }
+    .rank {
+      width: 30px; height: 30px;
+      flex: 0 0 30px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      font-weight: 700; font-size: 14px;
+      background: #f6efe1; color: var(--gold);
+    }
+    .row:first-child .rank {
+      background: linear-gradient(135deg, var(--gold), var(--gold-soft));
+      color: #fff;
+    }
+    .meta { flex: 1; min-width: 0; }
+    .name { font-weight: 600; font-size: 15px; color: var(--ink); }
+    .gid { font-size: 12px; color: #b3a59f; margin-top: 2px; }
+    .bar-track {
+      margin-top: 8px;
+      height: 6px; border-radius: 6px;
+      background: #f1e9da; overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--raspberry), var(--gold));
+      width: 0;
+      transition: width .6s ease;
+    }
+    .clicks {
+      flex: 0 0 auto;
+      text-align: right;
+      min-width: 54px;
+    }
+    .clicks .n {
+      font-family: "Cormorant Garamond", serif;
+      font-weight: 700; font-size: 26px;
+      color: var(--raspberry);
+    }
+    .clicks .w { font-size: 11px; color: #b3a59f; }
+
+    .empty {
+      text-align: center; color: #b3a59f;
+      padding: 30px; font-size: 14px;
+    }
+    footer {
+      text-align: center; margin-top: 30px;
+      font-size: 13px; color: #b3a59f;
+    }
+    .refresh {
+      display: inline-block; margin-top: 10px;
+      background: none; border: 1px solid #ead9c2;
+      color: var(--gold); font-weight: 600;
+      padding: 8px 18px; border-radius: 999px;
+      cursor: pointer; font-family: inherit; font-size: 13px;
+    }
+    .refresh:hover { background: #fbf4e8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="crest">🍬🔍</div>
+      <h1>Откуда приходят люди</h1>
+      <div class="sub">La Ciudad de los Sentidos · переходы по группам</div>
+    </header>
+
+    <div class="total-card">
+      <div class="total-label">Всего переходов</div>
+      <div class="total-num" id="total">—</div>
+      <div class="total-foot" id="updated"></div>
+    </div>
+
+    <div class="list" id="list">
+      <div class="empty">Загружаю…</div>
+    </div>
+
+    <footer>
+      <div>Обновляется автоматически при каждом клике по ссылке</div>
+      <button class="refresh" onclick="load()">Обновить сейчас</button>
+    </footer>
+  </div>
+
+  <script>
+    function fmtDate(iso) {
+      if (!iso) return "Пока ни одного перехода";
+      try {
+        const d = new Date(iso);
+        return "Последний переход: " + d.toLocaleString("ru-RU", {
+          day: "numeric", month: "long", hour: "2-digit", minute: "2-digit"
+        });
+      } catch (e) { return ""; }
+    }
+
+    async function load() {
+      const list = document.getElementById("list");
+      try {
+        const r = await fetch("/api/stats-data", { cache: "no-store" });
+        const data = await r.json();
+
+        document.getElementById("total").textContent = data.total;
+        document.getElementById("updated").textContent = fmtDate(data.updated);
+
+        const max = Math.max(1, ...data.rows.map(x => x.clicks));
+        if (!data.rows.length) {
+          list.innerHTML = '<div class="empty">Групп пока нет</div>';
+          return;
+        }
+        list.innerHTML = data.rows.map((row, i) => `
+          <div class="row">
+            <div class="rank">${i + 1}</div>
+            <div class="meta">
+              <div class="name">${row.name}</div>
+              <div class="gid">${row.gid}</div>
+              <div class="bar-track"><div class="bar-fill" style="width:${(row.clicks / max) * 100}%"></div></div>
+            </div>
+            <div class="clicks">
+              <div class="n">${row.clicks}</div>
+              <div class="w">переходов</div>
+            </div>
+          </div>
+        `).join("");
+      } catch (e) {
+        list.innerHTML = '<div class="empty">Не удалось загрузить. Нажми «Обновить сейчас».</div>';
+      }
+    }
+    load();
+  </script>
+</body>
+</html>
