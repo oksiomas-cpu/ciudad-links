@@ -72,6 +72,14 @@ h1 .thin{display:block;color:var(--sage);font-style:italic;font-weight:400;font-
   color:var(--nefrit);
 }
 .card .desc{font-size:14.5px;line-height:1.55;font-weight:300;display:block}
+.card .cta{
+  display:inline-flex;align-items:center;gap:6px;
+  margin-top:14px;padding:9px 16px;border-radius:999px;
+  font-size:13px;font-weight:500;color:var(--ivory);
+  background:var(--nefrit);
+}
+.card .cta .arrow{font-size:14px;transition:transform .18s ease}
+.card:hover .cta .arrow{transform:translateX(3px)}
 
 .card--game{background:var(--mint)}
 .card--game .desc{color:var(--nefrit-soft)}
@@ -96,11 +104,13 @@ footer{
   <a class="card card--game" href="https://t.me/DonVerbobot?start=pass">
     <span class="label">🎮 Игра / Клуб</span>
     <span class="desc">Детективная игра на испанском по субботам в Zoom — испанский как практика, а не теория.</span>
+    <span class="cta">Перейди в Телеграм <span class="arrow">→</span></span>
   </a>
 
   <a class="card card--lessons" href="https://wa.me/34693654816">
     <span class="label">💬 Частные уроки</span>
     <span class="desc">Дети 6–16 идут по сильной школьной программе без пробелов и стресса. Взрослые получают разговорный навык — а не сухую теорию и таблицы.</span>
+    <span class="cta">Написать в WhatsApp <span class="arrow">→</span></span>
   </a>
 
   <div class="rule" style="margin-top:26px"></div>
